@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { useParams, useSearchParams } from "next/navigation";
 import { useAutoResize } from "@/lib/embed/use-auto-resize";
 import { createDaisyClient, DaisyApiError } from "@/lib/daisy/client";
+import { BookingFlow } from "@/components/booking/booking-flow";
 import type { Studio } from "@/lib/daisy/types";
 
 type State =
@@ -43,12 +44,10 @@ export function Widget() {
   }, [client, host]);
 
   return (
-    <div ref={rootRef} className="p-4 font-sans text-neutral-900">
+        <div ref={rootRef} className="bg-white p-4 font-sans text-neutral-900">
       {state.kind === "loading" && <p className="text-neutral-500">Chargement…</p>}
 
-      {state.kind === "ready" && (
-        <p className="font-semibold">{state.studio.name} — widget prêt</p>
-      )}
+            {state.kind === "ready" && <BookingFlow client={client} studio={state.studio} />}
 
       {state.kind === "origin_not_allowed" && (
         <div className="space-y-3">

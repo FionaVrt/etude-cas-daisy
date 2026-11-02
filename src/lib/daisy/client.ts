@@ -47,3 +47,5 @@ export function createDaisyClient(studioKey: string, host: string | null) {
       }),
   };
 }
+
+export type DaisyClient = ReturnType<typeof createDaisyClient>;

@@ -58,6 +58,13 @@
       // N'écoute que SON iframe, venant de NOTRE domaine (plusieurs widgets possibles)
       if (e.origin !== ORIGIN || e.source !== iframe.contentWindow) return;
       var data = e.data || {};
+
+      if (data.type === "daisy:step") {
+        // Si le haut du widget est sorti de l'écran (liste longue), on y remonte
+        if (iframe.getBoundingClientRect().top < 0) {
+          iframe.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
       if (data.type === "daisy:ready") {
         ready = true;
         clearTimeout(timer);
