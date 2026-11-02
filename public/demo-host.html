@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atelier Terre & Feu — site de démo</title>
+  <style>
+    /* CSS volontairement agressif, comme sur certains sites d'artisans */
+    * { box-sizing: content-box !important; font-family: "Comic Sans MS", cursive !important; }
+    body { margin: 0; padding: 16px; background: #fdf3e7; color: #5a2d0c; line-height: 2.5 !important; }
+    div { padding: 12px !important; border: 2px dashed #c4643a !important; }
+    button, input { all: unset; font-size: 28px !important; color: hotpink !important; }
+    iframe { height: 150px !important; width: 50% !important; border: 5px solid red !important; }
+    .layout { display: flex; gap: 24px; flex-wrap: wrap; }
+    aside { width: 320px; }
+    main { flex: 1; min-width: 320px; }
+  </style>
+</head>
+<body>
+  <h1>Atelier Terre & Feu</h1>
+  <button>Bouton du site hôte</button>
+
+  <div class="layout">
+    <main>
+      <h2>Pleine largeur</h2>
+      <div id="daisy-booking" data-studio="std_pk_7f2a9c"></div>
+    </main>
+    <aside>
+      <h2>Colonne 320 px</h2>
+      <div class="daisy-booking" data-studio="std_pk_big"></div>
+    </aside>
+  </div>
+
+  <script src="http://localhost:3000/embed.js" async></script>
+</body>
+</html>
