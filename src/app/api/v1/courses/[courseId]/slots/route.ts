@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { getSlotsForCourse } from "@/lib/daisy/mock-data";
-import { apiError, checkHost, delay, findStudio } from "@/lib/daisy/mock-server";
+import { db, findStudio } from "@/lib/daisy/db";
+import { apiError, checkHost } from "@/lib/daisy/mock-server";
 
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -8,15 +8,12 @@ export async function GET(
   req: Request,
   { params }: { params: Promise<{ courseId: string }> }
 ) {
-  await delay(300, 900);
-  const studio = findStudio(req);
+  const studio = await findStudio(req);
   if (!studio) return apiError(401, "invalid_key");
   const denied = checkHost(req, studio);
   if (denied) return denied;
 
   const { courseId } = await params;
-  const course = studio.courses.find((c) => c.course_id === courseId);
-  if (!course) return apiError(404, "not_found");
 
   const url = new URL(req.url);
   const fromParam = url.searchParams.get("from");
@@ -31,10 +28,27 @@ export async function GET(
     return apiError(400, "invalid_window");
   }
 
-  const slots = getSlotsForCourse(course).filter((s) => {
-    const start = new Date(s.starts_at);
-    return start >= from && start <= to;
-  });
+  // Le cours doit appartenir à l'atelier de la clé
+  const { data: course } = await db
+    .from("courses")
+    .select("id")
+    .eq("id", courseId)
+    .eq("studio_id", studio.studio_id)
+    .maybeSingle();
+  if (!course) return apiError(404, "not_found");
 
-  return NextResponse.json({ slots });
+  const { data, error } = await db
+    .from("slots")
+    .select("id, starts_at, seats_total, seats_available, price_cents")
+    .eq("course_id", courseId)
+    .eq("cancelled", false)
+    .gte("starts_at", from.toISOString())
+    .lte("starts_at", to.toISOString())
+    .order("starts_at");
+
+  if (error) return apiError(500, "server_error");
+
+  return NextResponse.json({
+    slots: data.map(({ id, ...rest }) => ({ slot_id: id, ...rest })),
+  });
 }

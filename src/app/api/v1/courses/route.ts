@@ -1,12 +1,22 @@
 import { NextResponse } from "next/server";
-import { apiError, checkHost, delay, findStudio } from "@/lib/daisy/mock-server";
+import { db, findStudio } from "@/lib/daisy/db";
+import { apiError, checkHost } from "@/lib/daisy/mock-server";
 
 export async function GET(req: Request) {
-  await delay(300, 800);
-  const studio = findStudio(req);
+  const studio = await findStudio(req);
   if (!studio) return apiError(401, "invalid_key");
   const denied = checkHost(req, studio);
   if (denied) return denied;
 
-  return NextResponse.json({ courses: studio.courses });
+  const { data, error } = await db
+    .from("courses")
+    .select("id, name, description, duration_minutes, price_cents, image_url, level")
+    .eq("studio_id", studio.studio_id)
+    .order("position");
+
+  if (error) return apiError(500, "server_error");
+
+  return NextResponse.json({
+    courses: data.map(({ id, ...rest }) => ({ course_id: id, ...rest })),
+  });
 }
