@@ -133,7 +133,7 @@ export function BookingFlow({ client, studio }: { client: DaisyClient; studio: S
     setStep({ name: "course" });
   }
 
-    return (
+  return (
     <div
       style={
         {

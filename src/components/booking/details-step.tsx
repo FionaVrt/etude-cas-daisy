@@ -41,7 +41,8 @@ function validate(d: CustomerDraft, studio: Studio): Errors {
   const phone = normalizePhone(d.phone);
   if (!phone && studio.booking_policy.requires_phone) {
     errors.phone = "L'atelier demande un numéro pour vous prévenir en cas d'imprévu.";
-  } else if (phone && !/^\+?\d{8,15}$/.test(phone)) {
+   } else if (phone && (phone.startsWith("0") || !/^\+?\d{8,15}$/.test(phone))) {
+    // Un numéro qui commence encore par 0 après conversion n'a pas 10 chiffres
     errors.phone = "Ce numéro semble incomplet.";
   }
   return errors;
