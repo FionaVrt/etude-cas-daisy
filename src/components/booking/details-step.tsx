@@ -167,7 +167,7 @@ export function DetailsStep({ studio, slot, draft, submitError, onChange, onSubm
         </p>
         <button
           type="submit"
-          className="w-full rounded-md bg-neutral-900 px-4 py-3 font-medium text-white"
+            className="w-full rounded-md bg-[var(--daisy-button-bg)] px-4 py-3 font-medium text-[var(--daisy-button-fg)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--daisy-primary)]"
         >
           Réserver
         </button>

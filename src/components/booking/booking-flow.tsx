@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useRef, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import type { DaisyClient } from "@/lib/daisy/client";
 import type { BookingRequest, BookingResponse, Course, Slot, Studio } from "@/lib/daisy/types";
 import { formatPrice, formatSlotDay, formatSlotTime } from "@/lib/format";
+import { buildTheme } from "@/lib/theme";
 import { CourseStep } from "./course-step";
 import { DaisyApiError, NetworkError } from "@/lib/daisy/client";
 import { SlotStep } from "./slot-step";
@@ -37,6 +38,7 @@ export function BookingFlow({ client, studio }: { client: DaisyClient; studio: S
   const [draft, setDraft] = useState<CustomerDraft>(EMPTY_DRAFT);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [slotNotice, setSlotNotice] = useState<string | null>(null);
+  const theme = useMemo(() => buildTheme(studio.branding.primary_color), [studio]);
   const headingRef = useRef<HTMLHeadingElement>(null);
   const isFirstRender = useRef(true);
 
@@ -131,8 +133,18 @@ export function BookingFlow({ client, studio }: { client: DaisyClient; studio: S
     setStep({ name: "course" });
   }
 
-  return (
-    <div style={{ "--daisy-primary": studio.branding.primary_color } as CSSProperties}>
+    return (
+    <div
+      style={
+        {
+          "--daisy-primary": theme.accent,
+          "--daisy-button-bg": theme.buttonBg,
+          "--daisy-button-fg": theme.buttonFg,
+        } as CSSProperties
+      }
+    >
+      <StudioHeader studio={studio} />
+
       {(step.name === "slot" || step.name === "details") && (
         <button
           type="button"
@@ -176,7 +188,7 @@ export function BookingFlow({ client, studio }: { client: DaisyClient; studio: S
         </div>
       )}
 
-            {step.name === "slot" && (
+      {step.name === "slot" && (
         <SlotStep
           client={client}
           studio={studio}
@@ -300,6 +312,27 @@ function Confirmation({
       >
         Réserver un autre cours
       </button>
+    </div>
+  );
+}
+
+function StudioHeader({ studio }: { studio: Studio }) {
+  const [failed, setFailed] = useState(false);
+  const logo = studio.branding.logo_url;
+
+  return (
+    <div className="mb-4 flex min-h-8 items-center border-b border-neutral-100 pb-3">
+      {logo && !failed ? (
+        // eslint-disable-next-line @next/next/no-img-element -- logo tiers, taille contrainte
+        <img
+          src={logo}
+          alt={studio.name}
+          onError={() => setFailed(true)}
+          className="h-8 max-w-[160px] object-contain"
+        />
+      ) : (
+        <span className="text-sm font-semibold">{studio.name}</span>
+      )}
     </div>
   );
 }
