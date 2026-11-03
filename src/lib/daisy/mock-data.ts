@@ -6,8 +6,8 @@ const LONG_DESC =
   "Un après-midi complet pour découvrir l'émaillage : préparation des pièces, choix des émaux, techniques de trempage et de pinceau. ".repeat(6).trim();
 
 const terreEtFeu: MockStudio = {
-   public_key: "std_pk_7f2a9c",
-  allowed_origins: ["http://localhost:5500"],   // ← ajout
+  public_key: "std_pk_7f2a9c",
+  allowed_origins: ["http://localhost:5500"],
   studio_id: "std_2201",
   name: "Atelier Terre & Feu",
   timezone: "Europe/Paris",
@@ -47,9 +47,9 @@ const terreEtFeu: MockStudio = {
 };
 
 const grandAtelier: MockStudio = {
-   ...terreEtFeu,
+  ...terreEtFeu,
   public_key: "std_pk_big",
-  allowed_origins: [],                           // ← ajout
+  allowed_origins: ["http://localhost:5500"],
   studio_id: "std_3300",
   name: "La Grande Fabrique",
   branding: { primary_color: "#2F5D50", logo_url: null },

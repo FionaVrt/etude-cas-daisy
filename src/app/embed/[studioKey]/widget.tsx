@@ -15,9 +15,14 @@ type State =
 
 export function Widget() {
   const { studioKey } = useParams<{ studioKey: string }>();
-  const host = useSearchParams().get("host");
+   const params = useSearchParams();
+  const host = params.get("host");
+  const mockScenario = params.get("mock");
   const rootRef = useRef<HTMLDivElement>(null);
-  const client = useMemo(() => createDaisyClient(studioKey, host), [studioKey, host]);
+  const client = useMemo(
+    () => createDaisyClient(studioKey, host, mockScenario),
+    [studioKey, host, mockScenario]
+  );
   const [state, setState] = useState<State>({ kind: "loading" });
 
   useAutoResize(rootRef, host);
@@ -41,7 +46,7 @@ export function Widget() {
     return () => {
       cancelled = true;
     };
-  }, [client, host]);
+  }, [client, host, mockScenario]);
 
   return (
         <div ref={rootRef} className="bg-white p-4 font-sans text-neutral-900">

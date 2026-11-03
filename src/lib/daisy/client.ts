@@ -12,15 +12,24 @@ export class DaisyApiError extends Error {
 
 export class NetworkError extends Error {}
 
-export function createDaisyClient(studioKey: string, host: string | null) {
+export function createDaisyClient(
+  studioKey: string,
+  host: string | null,
+  mockScenario: string | null = null
+) {
   async function request<T>(path: string, init: RequestInit = {}): Promise<T> {
     const headers = new Headers(init.headers);
     headers.set("x-daisy-key", studioKey);
     if (host) headers.set("x-daisy-host", host);
+    if (mockScenario) headers.set("x-mock-scenario", mockScenario);
 
     let res: Response;
     try {
-      res = await fetch(`/api/v1${path}`, { ...init, headers });
+      res = await fetch(`/api/v1${path}`, {
+        ...init,
+        headers,
+        signal: AbortSignal.timeout(15000),
+      });
     } catch {
       throw new NetworkError("Réseau indisponible");
     }
@@ -43,7 +52,10 @@ export function createDaisyClient(studioKey: string, host: string | null) {
       request<BookingResponse>("/bookings", {
         method: "POST",
         body: JSON.stringify(body),
-        headers: { "content-type": "application/json", "idempotency-key": idempotencyKey },
+        headers: {
+          "content-type": "application/json",
+          "idempotency-key": idempotencyKey,
+        },
       }),
   };
 }

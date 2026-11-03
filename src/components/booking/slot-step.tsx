@@ -9,13 +9,14 @@ type Props = {
   client: DaisyClient;
   studio: Studio;
   course: Course;
+  notice?: string | null;
   onSelect: (slot: Slot) => void;
 };
 
 const WINDOW_MS = 28 * 24 * 60 * 60 * 1000; // 4 semaines par chargement
 const MAX_WINDOWS = 6; // ~6 mois, bien au-delà de l'usage réel
 
-export function SlotStep({ client, studio, course, onSelect }: Props) {
+export function SlotStep({ client, studio, course, notice, onSelect }: Props) {
   const [start] = useState(() => Date.now());
   const [windows, setWindows] = useState(1);
   const [attempt, setAttempt] = useState(0);
@@ -58,9 +59,15 @@ export function SlotStep({ client, studio, course, onSelect }: Props) {
         </p>
       )}
 
+      {notice && (
+        <p role="alert" className="rounded-md bg-amber-50 px-3 py-2 text-sm text-amber-900">
+          {notice}
+        </p>
+      )}
+
       {groups.map(([day, daySlots]) => (
         <section key={day}>
-          <h3 className="mb-2 text-sm font-medium capitalize text-neutral-600">{day}</h3>
+          <h3 className="mb-2 text-sm font-medium text-neutral-600 first-letter:uppercase">{day}</h3>
           <ul className="space-y-2">
             {daySlots.map((slot) => (
               <li key={slot.slot_id}>

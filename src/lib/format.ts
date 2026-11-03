@@ -5,9 +5,12 @@ export function formatDuration(minutes: number) {
 }
 
 export function formatPrice(cents: number, currency: string) {
+  const digits = cents % 100 === 0 ? 0 : 2;
   return new Intl.NumberFormat("fr-FR", {
     style: "currency",
     currency,
+    minimumFractionDigits: digits,
+    maximumFractionDigits: digits,
   }).format(cents / 100);
 }
 
