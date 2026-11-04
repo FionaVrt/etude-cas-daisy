@@ -124,6 +124,4 @@ Base : créer un projet Supabase, exécuter dans l'ordre `supabase/01_schema.sql
 
 Scénarios forcés, déclenchés à l'envoi : `?mock=slot_full`, `?mock=slot_cancelled`, `?mock=rate_limited` (ex. `http://localhost:3000/embed/std_pk_7f2a9c?mock=slot_cancelled`).
 
----
 
-Développé avec l'aide de Claude (Anthropic) comme assistant de code ; les choix et compromis sont détaillés ici pour être discutés en entretien.
